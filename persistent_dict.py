@@ -28,8 +28,19 @@ class PersistentDict(object):
         self.successor = None
         if d is None:
             self.data = {}
+        elif isinstance(d, PersistentDict):
+            # this case is handled in __new__
+            pass
         else:
             self.data = dict(d)
+
+    def __new__(cls, d=None):
+        if isinstance(d, cls):
+            return d
+        return object.__new__(cls, d)
+
+    def __copy__(self):
+        return self
 
     def reroot(self):
         # see
