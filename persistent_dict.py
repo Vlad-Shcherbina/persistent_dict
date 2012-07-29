@@ -1,5 +1,8 @@
+from itertools import chain
+
 
 NO_VALUE = object()
+
 
 class PersistentDict(object):
 	'''
@@ -20,7 +23,7 @@ class PersistentDict(object):
 		'successor',
 		'data',		# either dict contents or diff (in case successor is not None)
 		]
-		
+
 	def __init__(self, d=None):
 		self.successor = None
 		if d is None:
@@ -29,6 +32,11 @@ class PersistentDict(object):
 			self.data = dict(d)
 
 	def reroot(self):
+		# see
+		# A Persistent Union-Find Data Structure
+        # by Sylvain Conchon Jean-Christophe Filliˆatre
+        # section 2.3.2
+
 		succ = self.successor
 		if succ is None:
 			return
@@ -70,21 +78,15 @@ class PersistentDict(object):
 		data = self.data
 		diff = {}
 
+		items = F.items()
+
 		if len(args) > 0:
 			E, = args
 			if hasattr(E, 'keys'):
 				E = E.items()
-			for key, value in E:
-				old_value = data.get(key, NO_VALUE)
-				if old_value is not value:
-					if key not in diff:
-						diff[key] = old_value
-					if value is NO_VALUE:
-						del data[key]
-					else:
-						data[key] = value
+			items = chain(E, items)
 
-		for key, value in F.items():
+		for key, value in items:
 			old_value = data.get(key, NO_VALUE)
 			if old_value is not value:
 				if key not in diff:
