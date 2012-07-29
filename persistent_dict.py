@@ -15,7 +15,7 @@ class PersistentDict(object):
 	>>> sorted(d.items()) # previous version is intact
 	[('a', 10), ('b', 20)]
 	'''
-	
+
 	__slots__ = [
 		'successor',
 		'data',		# either dict contents or diff (in case successor is not None)
@@ -54,6 +54,10 @@ class PersistentDict(object):
 	def __getitem__(self, key):
 		self.reroot()
 		return self.data[key]
+
+	def __contains__(self, key):
+		self.reroot()
+		return key in self.data
 
 	def update(self, E, **F):
 		t = self
