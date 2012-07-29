@@ -20,6 +20,7 @@ class PersistentDict(object):
 		'successor',
 		'data',		# either dict contents or diff (in case successor is not None)
 		]
+		
 	def __init__(self, d=None):
 		self.successor = None
 		if d is None:
@@ -59,34 +60,53 @@ class PersistentDict(object):
 		self.reroot()
 		return key in self.data
 
-	def update(self, E, **F):
-		t = self
-		if hasattr(E, 'keys'):
-			for k in E.keys():
-				t = t.set(k, E[k])
-		else:
-			for k, v in E.keys():
-				t = t.set(k, v)
-		for k, v in F.items():
-			t = t.set(k, v)
-		return t
+	def update(self, *args, **F):
+		'''
+		Similar to dict.update, but return modified version instead of updating inplace.
 
-	def set(self, key, value):
+		Also treat NO_VALUE as instruction to delete item.
+		'''
 		self.reroot()
 		data = self.data
-		old_value = data.get(key, NO_VALUE)
-		if value is NO_VALUE:
-			del data[key]
-		else:
-			if value is old_value:
-				return self
-			data[key] = value
+		diff = {}
+
+		if len(args) > 0:
+			E, = args
+			if hasattr(E, 'keys'):
+				E = E.items()
+			for key, value in E:
+				old_value = data.get(key, NO_VALUE)
+				if old_value is not value:
+					if key not in diff:
+						diff[key] = old_value
+					if value is NO_VALUE:
+						del data[key]
+					else:
+						data[key] = value
+
+		for key, value in F.items():
+			old_value = data.get(key, NO_VALUE)
+			if old_value is not value:
+				if key not in diff:
+					diff[key] = old_value
+				if value is NO_VALUE:
+					del data[key]
+				else:
+					data[key] = value
+
+		if not diff:
+			return self
+
 		succ = self.successor = PersistentDict()
 		succ.data = data
-		self.data = {key: old_value}
+		self.data = diff
 		return succ
 
+	def set(self, key, value):
+		return self.update({key:value})
+
 	def delete(self, key):
+		assert key in self
 		return self.set(key, NO_VALUE)
 
 	def keys(self):
@@ -108,3 +128,4 @@ class PersistentDict(object):
 
 	def __ne__(self, other):
 		return not self.__eq__(other)
+
