@@ -100,3 +100,11 @@ class PersistentDict(object):
 	def __repr__(self):
 		self.reroot()
 		return 'PersistentDict({!r})'.format(self.data)
+
+	def __eq__(self, other):
+		if self is other:
+			return True
+		return set(self.items()) == set(other.items())
+
+	def __ne__(self, other):
+		return not self.__eq__(other)
