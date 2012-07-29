@@ -27,4 +27,4 @@ def test_pd_construction():
 
 if __name__ == '__main__':
     import nose
-    nose.run()
+    nose.run(argv=[__file__, '--with-doctest', '--detailed-errors'])
