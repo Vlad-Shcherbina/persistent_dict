@@ -11,6 +11,10 @@ def test_pd_basics():
     assert d3 == {'a':10}
     assert d == {}
     assert d2 == {1:2, 'a':10}
+    
+    assert len(d) == 0
+    assert len(d2) == 2
+    assert len(d3) == 1
 
 
 def test_pd_construction():

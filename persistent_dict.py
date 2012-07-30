@@ -130,6 +130,10 @@ class PersistentDict(object):
         self.reroot()
         return self.data.items()
 
+    def __len__(self):
+        self.reroot()
+        return len(self.data)
+
     def __repr__(self):
         self.reroot()
         return 'PersistentDict({!r})'.format(self.data)
