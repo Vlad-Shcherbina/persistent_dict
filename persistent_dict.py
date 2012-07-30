@@ -1,4 +1,5 @@
 from itertools import chain
+from random import randrange
 
 
 NO_VALUE = object()
@@ -61,6 +62,13 @@ class PersistentDict(object):
         root = s
         data = root.data
         for s in reversed(path):
+            split_root = randrange(2*len(data)+len(s.data)+10) < len(s.data)
+
+            if split_root:
+                root.data = data
+                root.successor = None
+                data = dict(data)
+
             new_diff = {}
             for k, v in s.data.items():
                 new_diff[k] = data.get(k, NO_VALUE)
@@ -68,8 +76,11 @@ class PersistentDict(object):
                     del data[k]
                 else:
                     data[k] = v
-            root.data = new_diff
-            root.successor = s
+
+            if not split_root:
+                root.data = new_diff
+                root.successor = s
+
             root = s
 
         assert root is self
