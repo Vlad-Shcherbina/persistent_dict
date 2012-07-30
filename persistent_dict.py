@@ -43,27 +43,36 @@ class PersistentDict(object):
         return self
 
     def reroot(self):
+        # (nonrecursive version)
         # see
         # A Persistent Union-Find Data Structure
         # by Sylvain Conchon Jean-Christophe Filliatre
         # section 2.3.2
 
-        succ = self.successor
-        if succ is None:
+        if self.successor is None:
             return
 
-        succ.reroot()
+        path = []
+        s = self
+        while s.successor is not None:
+            path.append(s)
+            s = s.successor
 
-        data = succ.data
-        new_diff = {}
-        for k, v in self.data.items():
-            new_diff[k] = data.get(k, NO_VALUE)
-            if v is NO_VALUE:
-                del data[k]
-            else:
-                data[k] = v
-        succ.data = new_diff
-        succ.successor = self
+        root = s
+        data = root.data
+        for s in reversed(path):
+            new_diff = {}
+            for k, v in s.data.items():
+                new_diff[k] = data.get(k, NO_VALUE)
+                if v is NO_VALUE:
+                    del data[k]
+                else:
+                    data[k] = v
+            root.data = new_diff
+            root.successor = s
+            root = s
+
+        assert root is self
         self.data = data
         self.successor = None
 
