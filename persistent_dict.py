@@ -45,7 +45,7 @@ class PersistentDict(object):
     def reroot(self):
         # see
         # A Persistent Union-Find Data Structure
-        # by Sylvain Conchon Jean-Christophe Filliˆatre
+        # by Sylvain Conchon Jean-Christophe Filliatre
         # section 2.3.2
 
         succ = self.successor
@@ -84,6 +84,11 @@ class PersistentDict(object):
         Similar to dict.update, but return modified version instead of updating inplace.
 
         Also treat NO_VALUE as instruction to delete item.
+
+        >>> d = PersistentDict()
+        >>> d2 = d.update({'a':1}, b=2, c=3)
+        >>> sorted(d2.items())
+        [('a', 1), ('b', 2), ('c', 3)]
         '''
         self.reroot()
         data = self.data
