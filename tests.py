@@ -1,4 +1,5 @@
 from persistent_dict import PersistentDict, NO_VALUE
+from clone_dict import CloneDict
 from copy import copy
 
 
@@ -11,7 +12,7 @@ def test_pd_basics():
     assert d3 == {'a':10}
     assert d == {}
     assert d2 == {1:2, 'a':10}
-    
+
     assert len(d) == 0
     assert len(d2) == 2
     assert len(d3) == 1
@@ -27,6 +28,16 @@ def test_pd_construction():
     assert d == {}
     assert {1:2} == d2
     assert d3 == {1:2} == d4
+
+
+def test_cd():
+    for dict_cls in dict, CloneDict:
+        d = dict_cls()
+        d[0] = 1
+        d2 = copy(d)
+        d[1] = 2
+        assert d2 == {0:1}
+        assert d == {0:1, 1:2}
 
 
 if __name__ == '__main__':
