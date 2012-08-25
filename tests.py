@@ -8,13 +8,13 @@ from copy import copy
 def test_pd_basics():
     d = PersistentDict()
     assert d == {}
-    d2 = d.update({1:2}, a=10)
-    assert d2 == {1:2, 'a':10}
+    d2 = d.update({1: 2}, a=10)
+    assert d2 == {1: 2, 'a': 10}
     d3 = d2.update({1: NO_VALUE})
-    assert d3 == {'a':10}
+    assert d3 == {'a': 10}
     assert list(d3.keys()) == ['a']
     assert d == {}
-    assert d2 == {1:2, 'a':10}
+    assert d2 == {1: 2, 'a': 10}
     assert d2 != d
 
     assert d2.get(1) == 2
@@ -35,13 +35,13 @@ def test_pd_basics():
 
 def test_pd_update():
     d = PersistentDict()
-    d = d.update({1:2})
-    assert d == {1:2}
+    d = d.update({1: 2})
+    assert d == {1: 2}
 
     d = d.update([(3, 4)])
-    assert d == {1:2, 3:4}
+    assert d == {1: 2, 3: 4}
 
-    d = d.update({1:NO_VALUE, 3:NO_VALUE}, z=42)
+    d = d.update({1: NO_VALUE, 3: NO_VALUE}, z=42)
     assert d == dict(z=42)
 
     d2 = d.update()
@@ -54,7 +54,7 @@ def test_pd_update():
     assert d2 == dict(z=42, d=d)
 
     d = d.update([(42, 41), (42, 42)])
-    assert d == {'z':42, 42:42}
+    assert d == {'z': 42, 42: 42}
 
 
 def test_pd_construction():
@@ -65,8 +65,8 @@ def test_pd_construction():
 
     assert d is not d2 is d3 is d4
     assert d == {}
-    assert {1:2} == d2
-    assert d3 == {1:2} == d4
+    assert {1: 2} == d2
+    assert d3 == {1: 2} == d4
 
 
 def test_cd():
@@ -75,8 +75,8 @@ def test_cd():
         d[0] = 1
         d2 = copy(d)
         d[1] = 2
-        assert d2 == {0:1}
-        assert d == {0:1, 1:2}
+        assert d2 == {0: 1}
+        assert d == {0: 1, 1: 2}
 
 
 if __name__ == '__main__':
