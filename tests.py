@@ -78,6 +78,27 @@ def test_cd():
         assert d2 == {0: 1}
         assert d == {0: 1, 1: 2}
 
+        d2.update([(1, 3)])
+        d2.update({2: 4})
+        d2.update(x=5)
+        assert d2 == {0: 1, 1: 3, 2: 4, 'x': 5}
+        assert d == {0: 1, 1: 2}
+
+        assert d.get(0) == 1
+        assert d.get(42) is None
+
+        assert d[1] == 2
+        with assert_raises(KeyError):
+            d[42]
+
+        assert sorted(d.keys()) == [0, 1]
+
+        del d2[0]
+        assert len(d2) == 3
+        assert {1: 3, 2: 4, 'x': 5} == d2
+
+        assert d == d != d2
+
 
 if __name__ == '__main__':
     import sys
