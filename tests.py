@@ -1,3 +1,5 @@
+import random
+
 from nose.tools import assert_raises
 
 from persistent_dict import PersistentDict, NO_VALUE
@@ -107,11 +109,53 @@ def test_cd():
         assert d == d != d2
 
 
+def test_cd_random_ops():
+    results = []
+    for dict_cls in dict, CloneDict:
+        #fout = open('zzz_'+dict_cls.__name__+'.log', 'w')
+        rnd = random.Random(42)
+        ds = [dict_cls() for _ in range(10)]
+
+        result = []
+        for _ in range(10000):
+            d_idx = rnd.randrange(len(ds))
+            d = ds[d_idx]
+            k = rnd.randrange(100)
+
+            if rnd.random() < 0.5:
+                d[k] = rnd.randrange(100)
+            #print>>fout, 'ds[{}][{}] = 1'.format(d_idx, k)
+            
+            if k in d:
+                result.append(d[k])
+                if rnd.random() < 0.5:
+                    d[k] = rnd.randrange(100, 200)
+                else:
+                    del d[k]
+            else:
+                result.append(-k)
+                d[k] = rnd.randrange(100, 200)
+            
+            if rnd.random() < 0.1:
+                result.append(len(d)+1000)
+            
+            #result.append([sorted(dd.items()) for dd in ds])
+            #print>>fout, [sorted(dd.items()) for dd in ds]
+            if rnd.random() < 0.1:
+                i = rnd.randrange(len(ds))
+                #print>>fout, 'ds[{}] = copy(ds[{}])'.format(i, d_idx)
+                ds[i] = copy(d)
+
+        #fout.close()
+        results.append(result)
+
+    print results[0]
+    print results[1]
+    assert results[0] == results[1]
+
 
 if __name__ == '__main__':
     import sys
-    import random
     import nose
 
-    random.seed(42)
     nose.run(argv=[__file__, '--with-doctest', '--detailed-errors'])

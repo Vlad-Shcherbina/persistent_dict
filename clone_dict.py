@@ -66,6 +66,11 @@ class CloneDict(object):
     def __delitem__(self, key):
         self.diff[key] = NO_VALUE
 
+    def __contains__(self, key):
+        if key not in self.diff:
+            return key in self.base
+        return self.diff[key] is not NO_VALUE
+
     def keys(self):
         result = []
         for k, v in self.diff.items():
